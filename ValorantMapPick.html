@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Valorant Map Ban & Pick</title>
+    <style>
+        @font-face {
+            font-family: 'Valorant';
+            src: url('fonts/Valorant.ttf') format('truetype');
+        }
+
+        body {
+            font-family: 'Valorant', Arial, sans-serif;
+            text-align: center;
+            background-color: #121212;
+            color: white;
+            overflow: hidden;
+            text-transform: uppercase;
+        }
+
+        h1 {
+            margin-bottom: 10px;
+        }
+
+        .status {
+            font-size: 20px;
+            margin-bottom: 15px;
+            font-weight: bold;
+        }
+
+        .map-container {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 10px;
+            justify-content: center;
+            max-width: 800px;
+            margin: auto;
+        }
+
+        .map-button {
+            position: relative;
+            width: 150px;
+            height: 100px;
+            background-size: cover;
+            background-position: center;
+            border: 3px solid white;
+            cursor: pointer;
+            transition: transform 0.2s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .map-button:hover {
+            transform: scale(1.05);
+        }
+
+        .map-button h1 {
+            position: absolute;
+            bottom: 5px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 14px;
+            color: white;
+            background: rgba(0, 0, 0, 0.5);
+            padding: 5px 10px;
+            border-radius: 5px;
+        }
+
+        .banned {
+            border-color: red;
+            filter: brightness(50%);
+        }
+
+        .picked {
+            border-color: lime;
+            filter: brightness(110%);
+            transform: scale(1.1);
+            box-shadow: 0 0 15px lime;
+        }
+
+        .ban-overlay {
+            position: fixed;
+            width: 100vw;
+            height: 100vh;
+            top: 0;
+            left: 0;
+            background: rgba(255, 0, 0, 0.5);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 999;
+            animation: fadeOut 1s ease-out forwards;
+        }
+
+        .ban-overlay img {
+            max-width: 500px;
+            max-height: 300px;
+            border: 5px solid white;
+            box-shadow: 0 0 15px white;
+        }
+
+        .ban-overlay h1 {
+            font-size: 50px;
+            font-weight: bold;
+            color: white;
+            margin-top: 20px;
+        }
+
+        @keyframes fadeOut {
+            0% { opacity: 1; }
+            100% { opacity: 0; visibility: hidden; }
+        }
+
+        /* Picked Map Stays */
+        .picked-map-display {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+
+        .picked-map-display img {
+            max-width: 600px;
+            max-height: 350px;
+            border: 5px solid lime;
+            box-shadow: 0 0 15px lime;
+        }
+
+        .picked-map-display h1 {
+            font-size: 50px;
+            font-weight: bold;
+            color: white;
+            margin-top: 20px;
+        }
+
+    </style>
+</head>
+<body>
+
+    <h1>Valorant Map Ban & Pick</h1>
+    <div class="status" id="status-text">BANNING...</div>
+    <div class="status" id="banned-map-text">NO MAP BANNED YET.</div>
+
+    <div class="map-container">
+        <div class="map-button" onclick="banMap(this, 'Ascent')" style="background-image: url('Ascent.webp');"><h1>Ascent</h1></div>
+        <div class="map-button" onclick="banMap(this, 'Bind')" style="background-image: url('Bind.webp');"><h1>Bind</h1></div>
+        <div class="map-button" onclick="banMap(this, 'Haven')" style="background-image: url('Haven.webp');"><h1>Haven</h1></div>
+        <div class="map-button" onclick="banMap(this, 'Split')" style="background-image: url('Split.webp');"><h1>Split</h1></div>
+        <div class="map-button" onclick="banMap(this, 'Icebox')" style="background-image: url('Icebox.webp');"><h1>Icebox</h1></div>
+        <div class="map-button" onclick="banMap(this, 'Breeze')" style="background-image: url('Breeze.webp');"><h1>Breeze</h1></div>
+        <div class="map-button" onclick="banMap(this, 'Fracture')" style="background-image: url('Fracture.webp');"><h1>Fracture</h1></div>
+        <div class="map-button" onclick="banMap(this, 'Pearl')" style="background-image: url('Pearl.webp');"><h1>Pearl</h1></div>
+        <div class="map-button" onclick="banMap(this, 'Lotus')" style="background-image: url('Lotus.webp');"><h1>Lotus</h1></div>
+        <div class="map-button" onclick="banMap(this, 'Sunset')" style="background-image: url('Sunset.webp');"><h1>Sunset</h1></div>
+    </div>
+
+    <script>
+        let bannedCount = 0;
+        let totalMaps = 10;
+
+        function banMap(button, mapName) {
+            if (button.classList.contains("banned") || button.classList.contains("picked")) return;
+
+            bannedCount++;
+            button.classList.add("banned");
+
+            document.getElementById("banned-map-text").textContent = mapName + " IS BANNED";
+            showBanOverlay(mapName);
+
+            if (bannedCount === totalMaps - 1) {
+                let remainingMap = document.querySelector(".map-button:not(.banned)");
+                remainingMap.classList.remove("banned");
+                remainingMap.classList.add("picked");
+                let pickedMap = remainingMap.querySelector("h1").textContent;
+
+                document.getElementById("status-text").textContent = "";
+                document.getElementById("banned-map-text").textContent = pickedMap + " IS PICKED";
+                showPickedMap(pickedMap);
+            }
+        }
+
+        function showBanOverlay(mapName) {
+            let overlay = document.createElement("div");
+            overlay.classList.add("ban-overlay");
+
+            let img = document.createElement("img");
+            img.src = `${mapName}.webp`;
+
+            let text = document.createElement("h1");
+            text.textContent = "BANNED";
+
+            overlay.appendChild(img);
+            overlay.appendChild(text);
+            document.body.appendChild(overlay);
+
+            setTimeout(() => {
+                document.body.removeChild(overlay);
+            }, 1000);
+        }
+
+        function showPickedMap(mapName) {
+            let pickedDisplay = document.createElement("div");
+            pickedDisplay.classList.add("picked-map-display");
+
+            let img = document.createElement("img");
+            img.src = `${mapName}.webp`;
+
+            let text = document.createElement("h1");
+            text.textContent = mapName;
+
+            pickedDisplay.appendChild(img);
+            pickedDisplay.appendChild(text);
+            document.body.appendChild(pickedDisplay);
+        }
+
+    </script>
+
+</body>
+</html>
