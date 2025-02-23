@@ -17,6 +17,7 @@
             color: white;
             overflow: hidden;
             text-transform: uppercase;
+            padding: 10px;
         }
 
         h1 {
@@ -31,10 +32,10 @@
 
         .map-container {
             display: grid;
-            grid-template-columns: repeat(5, 1fr);
+            grid-template-columns: repeat(4, 1fr);
             gap: 10px;
             justify-content: center;
-            max-width: 800px;
+            max-width: 900px;
             margin: auto;
         }
 
@@ -68,6 +69,7 @@
         .banned {
             border-color: red;
             filter: brightness(50%);
+            pointer-events: none;
         }
 
         .picked {
@@ -75,31 +77,39 @@
             filter: brightness(110%);
             transform: scale(1.1);
             box-shadow: 0 0 15px lime;
+            pointer-events: none;
         }
 
-        .ban-overlay {
+        .overlay-animation {
             position: fixed;
             width: 100vw;
             height: 100vh;
             top: 0;
             left: 0;
-            background: rgba(255, 0, 0, 0.5);
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
             z-index: 999;
-            animation: fadeOut 1s ease-out forwards;
+            animation: fadeOut 1.5s ease-out forwards;
         }
 
-        .ban-overlay img {
+        .ban-overlay {
+            background: rgba(255, 0, 0, 0.5);
+        }
+
+        .pick-overlay {
+            background: rgba(0, 255, 0, 0.5);
+        }
+
+        .overlay-animation img {
             max-width: 80%;
             max-height: 50%;
             border: 5px solid white;
             box-shadow: 0 0 15px white;
         }
 
-        .ban-overlay h1 {
+        .overlay-animation h1 {
             font-size: 50px;
             font-weight: bold;
             color: white;
@@ -151,11 +161,10 @@
                 font-size: 16px;
             }
 
-            .ban-overlay h1, .picked-map-display h1 {
+            .overlay-animation h1, .picked-map-display h1 {
                 font-size: 30px;
             }
         }
-
     </style>
 </head>
 <body>
@@ -175,11 +184,12 @@
         <div class="map-button" onclick="banMap(this, 'Pearl.webp')" style="background-image: url('Pearl.webp');"><h1>Pearl</h1></div>
         <div class="map-button" onclick="banMap(this, 'Lotus.webp')" style="background-image: url('Lotus.webp');"><h1>Lotus</h1></div>
         <div class="map-button" onclick="banMap(this, 'Sunset.webp')" style="background-image: url('Sunset.webp');"><h1>Sunset</h1></div>
+        <div class="map-button" onclick="banMap(this, 'Abyss.webp')" style="background-image: url('Abyss.webp');"><h1>Abyss</h1></div>
     </div>
 
     <script>
         let bannedCount = 0;
-        let totalMaps = 10;
+        let totalMaps = 11;
 
         function banMap(button, mapFile) {
             if (button.classList.contains("banned") || button.classList.contains("picked")) return;
@@ -189,37 +199,32 @@
 
             let mapName = mapFile.replace(".webp", "");
             document.getElementById("banned-map-text").textContent = mapName + " IS BANNED";
-            showBanOverlay(mapFile, mapName);
+            showOverlay(mapFile, "BANNED", "ban-overlay");
 
             if (bannedCount === totalMaps - 1) {
                 let remainingMap = document.querySelector(".map-button:not(.banned)");
-                remainingMap.classList.remove("banned");
                 remainingMap.classList.add("picked");
-                let pickedMap = remainingMap.querySelector("h1").textContent;
 
+                let pickedMap = remainingMap.querySelector("h1").textContent;
                 document.getElementById("status-text").textContent = "";
                 document.getElementById("banned-map-text").textContent = pickedMap + " IS PICKED";
-                showPickedMap(mapFile, pickedMap);
+                showOverlay(remainingMap.style.backgroundImage.slice(5, -2), pickedMap, "pick-overlay");
+                showPickedMap(remainingMap.style.backgroundImage.slice(5, -2), pickedMap);
             }
         }
 
-        function showBanOverlay(mapFile, mapName) {
+        function showOverlay(mapFile, text, type) {
             let overlay = document.createElement("div");
-            overlay.classList.add("ban-overlay");
+            overlay.classList.add("overlay-animation", type);
 
             let img = document.createElement("img");
             img.src = mapFile;
 
-            let text = document.createElement("h1");
-            text.textContent = "BANNED";
+            let title = document.createElement("h1");
+            title.textContent = text;
 
-            overlay.appendChild(img);
-            overlay.appendChild(text);
+            overlay.append(img, title);
             document.body.appendChild(overlay);
-
-            setTimeout(() => {
-                document.body.removeChild(overlay);
-            }, 1000);
         }
 
         function showPickedMap(mapFile, mapName) {
@@ -232,14 +237,10 @@
             let text = document.createElement("h1");
             text.textContent = mapName;
 
-            pickedDisplay.appendChild(img);
-            pickedDisplay.appendChild(text);
+            pickedDisplay.append(img, text);
             document.body.appendChild(pickedDisplay);
         }
-
     </script>
 
 </body>
 </html>
-
-
