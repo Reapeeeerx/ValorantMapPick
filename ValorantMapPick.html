@@ -7,7 +7,7 @@
     <style>
         @font-face {
             font-family: 'Valorant';
-            src: url('fonts/Valorant.ttf') format('truetype');
+            src: url('Valorant.ttf') format('truetype');
         }
 
         body {
@@ -24,8 +24,8 @@
         }
 
         .status {
-            font-size: 20px;
-            margin-bottom: 15px;
+            font-size: 18px;
+            margin-bottom: 10px;
             font-weight: bold;
         }
 
@@ -40,8 +40,8 @@
 
         .map-button {
             position: relative;
-            width: 150px;
-            height: 100px;
+            width: 100%;
+            aspect-ratio: 3/2;
             background-size: cover;
             background-position: center;
             border: 3px solid white;
@@ -93,8 +93,8 @@
         }
 
         .ban-overlay img {
-            max-width: 500px;
-            max-height: 300px;
+            max-width: 80%;
+            max-height: 50%;
             border: 5px solid white;
             box-shadow: 0 0 15px white;
         }
@@ -111,7 +111,6 @@
             100% { opacity: 0; visibility: hidden; }
         }
 
-        /* Picked Map Stays */
         .picked-map-display {
             position: fixed;
             top: 50%;
@@ -125,17 +124,36 @@
         }
 
         .picked-map-display img {
-            max-width: 600px;
-            max-height: 350px;
+            max-width: 80%;
+            max-height: 60%;
             border: 5px solid lime;
             box-shadow: 0 0 15px lime;
         }
 
         .picked-map-display h1 {
-            font-size: 50px;
+            font-size: 40px;
             font-weight: bold;
             color: white;
-            margin-top: 20px;
+            margin-top: 10px;
+        }
+
+        @media (max-width: 768px) {
+            .map-container {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 8px;
+            }
+
+            .map-button h1 {
+                font-size: 12px;
+            }
+
+            .status {
+                font-size: 16px;
+            }
+
+            .ban-overlay h1, .picked-map-display h1 {
+                font-size: 30px;
+            }
         }
 
     </style>
@@ -147,30 +165,31 @@
     <div class="status" id="banned-map-text">NO MAP BANNED YET.</div>
 
     <div class="map-container">
-        <div class="map-button" onclick="banMap(this, 'Ascent')" style="background-image: url('Ascent.webp');"><h1>Ascent</h1></div>
-        <div class="map-button" onclick="banMap(this, 'Bind')" style="background-image: url('Bind.webp');"><h1>Bind</h1></div>
-        <div class="map-button" onclick="banMap(this, 'Haven')" style="background-image: url('Haven.webp');"><h1>Haven</h1></div>
-        <div class="map-button" onclick="banMap(this, 'Split')" style="background-image: url('Split.webp');"><h1>Split</h1></div>
-        <div class="map-button" onclick="banMap(this, 'Icebox')" style="background-image: url('Icebox.webp');"><h1>Icebox</h1></div>
-        <div class="map-button" onclick="banMap(this, 'Breeze')" style="background-image: url('Breeze.webp');"><h1>Breeze</h1></div>
-        <div class="map-button" onclick="banMap(this, 'Fracture')" style="background-image: url('Fracture.webp');"><h1>Fracture</h1></div>
-        <div class="map-button" onclick="banMap(this, 'Pearl')" style="background-image: url('Pearl.webp');"><h1>Pearl</h1></div>
-        <div class="map-button" onclick="banMap(this, 'Lotus')" style="background-image: url('Lotus.webp');"><h1>Lotus</h1></div>
-        <div class="map-button" onclick="banMap(this, 'Sunset')" style="background-image: url('Sunset.webp');"><h1>Sunset</h1></div>
+        <div class="map-button" onclick="banMap(this, 'Ascent.webp')" style="background-image: url('Ascent.webp');"><h1>Ascent</h1></div>
+        <div class="map-button" onclick="banMap(this, 'Bind.webp')" style="background-image: url('Bind.webp');"><h1>Bind</h1></div>
+        <div class="map-button" onclick="banMap(this, 'Haven.webp')" style="background-image: url('Haven.webp');"><h1>Haven</h1></div>
+        <div class="map-button" onclick="banMap(this, 'Split.webp')" style="background-image: url('Split.webp');"><h1>Split</h1></div>
+        <div class="map-button" onclick="banMap(this, 'Icebox.webp')" style="background-image: url('Icebox.webp');"><h1>Icebox</h1></div>
+        <div class="map-button" onclick="banMap(this, 'Breeze.webp')" style="background-image: url('Breeze.webp');"><h1>Breeze</h1></div>
+        <div class="map-button" onclick="banMap(this, 'Fracture.webp')" style="background-image: url('Fracture.webp');"><h1>Fracture</h1></div>
+        <div class="map-button" onclick="banMap(this, 'Pearl.webp')" style="background-image: url('Pearl.webp');"><h1>Pearl</h1></div>
+        <div class="map-button" onclick="banMap(this, 'Lotus.webp')" style="background-image: url('Lotus.webp');"><h1>Lotus</h1></div>
+        <div class="map-button" onclick="banMap(this, 'Sunset.webp')" style="background-image: url('Sunset.webp');"><h1>Sunset</h1></div>
     </div>
 
     <script>
         let bannedCount = 0;
         let totalMaps = 10;
 
-        function banMap(button, mapName) {
+        function banMap(button, mapFile) {
             if (button.classList.contains("banned") || button.classList.contains("picked")) return;
 
             bannedCount++;
             button.classList.add("banned");
 
+            let mapName = mapFile.replace(".webp", "");
             document.getElementById("banned-map-text").textContent = mapName + " IS BANNED";
-            showBanOverlay(mapName);
+            showBanOverlay(mapFile, mapName);
 
             if (bannedCount === totalMaps - 1) {
                 let remainingMap = document.querySelector(".map-button:not(.banned)");
@@ -180,16 +199,16 @@
 
                 document.getElementById("status-text").textContent = "";
                 document.getElementById("banned-map-text").textContent = pickedMap + " IS PICKED";
-                showPickedMap(pickedMap);
+                showPickedMap(mapFile, pickedMap);
             }
         }
 
-        function showBanOverlay(mapName) {
+        function showBanOverlay(mapFile, mapName) {
             let overlay = document.createElement("div");
             overlay.classList.add("ban-overlay");
 
             let img = document.createElement("img");
-            img.src = `${mapName}.webp`;
+            img.src = mapFile;
 
             let text = document.createElement("h1");
             text.textContent = "BANNED";
@@ -203,12 +222,12 @@
             }, 1000);
         }
 
-        function showPickedMap(mapName) {
+        function showPickedMap(mapFile, mapName) {
             let pickedDisplay = document.createElement("div");
             pickedDisplay.classList.add("picked-map-display");
 
             let img = document.createElement("img");
-            img.src = `${mapName}.webp`;
+            img.src = mapFile;
 
             let text = document.createElement("h1");
             text.textContent = mapName;
@@ -222,3 +241,4 @@
 
 </body>
 </html>
+
