@@ -1,0 +1,160 @@
+@font-face {
+    font-family: 'Valorant';
+    src: url('Valorant.ttf') format('truetype');
+}
+
+body {
+    font-family: 'Valorant', Arial, sans-serif;
+    text-align: center;
+    background-color: #121212;
+    color: white;
+    overflow: hidden;
+    text-transform: uppercase;
+    padding: 10px;
+}
+
+h1 {
+    margin-bottom: 10px;
+}
+
+.status {
+    font-size: 18px;
+    margin-bottom: 10px;
+    font-weight: bold;
+}
+
+.map-container {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+    justify-content: center;
+    max-width: 900px;
+    margin: auto;
+}
+
+.map-button {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 3/2;
+    background-size: cover;
+    background-position: center;
+    border: 3px solid white;
+    cursor: pointer;
+    transition: transform 0.2s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.map-button:hover {
+    transform: scale(1.05);
+}
+
+.map-button h1 {
+    position: absolute;
+    bottom: 5px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 14px;
+    color: white;
+    background: rgba(0, 0, 0, 0.5);
+    padding: 5px 10px;
+    border-radius: 5px;
+}
+
+.banned {
+    border-color: red;
+    filter: brightness(50%);
+    pointer-events: none;
+}
+
+.picked {
+    border-color: lime;
+    filter: brightness(110%);
+    transform: scale(1.1);
+    box-shadow: 0 0 15px lime;
+    pointer-events: none;
+}
+
+.overlay-animation {
+    position: fixed;
+    width: 100vw;
+    height: 100vh;
+    top: 0;
+    left: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    z-index: 999;
+    animation: fadeOut 1.5s ease-out forwards;
+}
+
+.ban-overlay {
+    background: rgba(255, 0, 0, 0.5);
+}
+
+.pick-overlay {
+    background: rgba(0, 255, 0, 0.5);
+}
+
+.overlay-animation img {
+    max-width: 80%;
+    max-height: 50%;
+    border: 5px solid white;
+    box-shadow: 0 0 15px white;
+}
+
+.overlay-animation h1 {
+    font-size: 50px;
+    font-weight: bold;
+    color: white;
+    margin-top: 20px;
+}
+
+@keyframes fadeOut {
+    0% { opacity: 1; }
+    100% { opacity: 0; visibility: hidden; }
+}
+
+.picked-map-display {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+}
+
+.picked-map-display img {
+    max-width: 80%;
+    max-height: 60%;
+    border: 5px solid lime;
+    box-shadow: 0 0 15px lime;
+}
+
+.picked-map-display h1 {
+    font-size: 40px;
+    font-weight: bold;
+    color: white;
+    margin-top: 10px;
+}
+
+@media (max-width: 768px) {
+    .map-container {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 8px;
+    }
+
+    .map-button h1 {
+        font-size: 12px;
+    }
+
+    .status {
+        font-size: 16px;
+    }
+
+    .overlay-animation h1, .picked-map-display h1 {
+        font-size: 30px;
+    }
+}
